@@ -16,3 +16,4 @@ chromadb
 instructor
 marvin
 unstructured
+python-dotenv
