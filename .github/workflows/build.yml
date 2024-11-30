@@ -25,6 +25,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ${{ env.workdir }}/package-lock.json
 
       - name: Install dependencies
         working-directory: ${{ env.workdir }}
