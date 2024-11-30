@@ -28,12 +28,15 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: ${{ env.workdir }}
         run: npm ci
 
       - name: Lint
+        working-directory: ${{ env.workdir }}
         run: npm run lint
 
       - name: Build
+        working-directory: ${{ env.workdir }}
         env:
           PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
         run: npm run build
