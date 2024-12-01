@@ -16,10 +16,10 @@ export class Chat {
 			},
 		});
 
-		const response = await request.text();
+		const response = await request.json();
 
 		const aiResponse = messageSchema.parse({
-			content: response,
+			content: response.content,
 			role: ERole.Assistant,
 			timestamp: new Date().toLocaleDateString(),
 		});
