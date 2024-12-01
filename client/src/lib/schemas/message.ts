@@ -8,8 +8,7 @@ export enum ERole {
 export const roleSchema = z.enum([ERole.User, ERole.Assistant]);
 
 export const messagePayloadSchema = z.object({
-	role: roleSchema,
-	content: z.string(),
+	question: z.string(),
 });
 
 export const messageSchema = z.object({

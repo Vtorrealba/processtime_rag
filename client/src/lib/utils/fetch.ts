@@ -10,7 +10,7 @@ const Fetch = () => {
 			defaultOptions.Authorization = `Bearer ${state.state.token}`;
 		}
 
-		const apiUrl = `${PUBLIC_API_URL}/${url}`;
+		const apiUrl = `${PUBLIC_API_URL}${url}`;
 		const requestOptions = {
 			...options,
 			headers: new Headers({

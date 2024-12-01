@@ -16,7 +16,9 @@ async function handleSendMessage(content: string) {
 	chatStore.isTyping = true;
 	chatStore.messages = [...chatStore.messages, messageSchema.parse(newMessage)];
 
-	const makeCompletion = await Services.chat.makeCompletion(newMessage);
+	const makeCompletion = await Services.chat.makeCompletion({
+		question: newMessage.content,
+	});
 
 	chatStore.isTyping = false;
 	chatStore.messages = [...chatStore.messages, makeCompletion];

@@ -4,7 +4,6 @@ import ChatInput from "$lib/components/chat/input.svelte";
 import ChatMessage from "$lib/components/chat/message.svelte";
 import Suggestion from "$lib/components/chat/suggestion.svelte";
 import TypingIndicator from "$lib/components/chat/typing-indicator.svelte";
-import Muted from "$lib/components/typography/muted.svelte";
 import { ERole, messageSchema } from "$lib/schemas/message";
 import Services from "$lib/services";
 import { chatStore } from "$lib/store/chat.svelte.js";
@@ -22,7 +21,9 @@ async function handleSendMessage(content: string) {
 	chatStore.isTyping = true;
 	chatStore.messages = [...chatStore.messages, messageSchema.parse(newMessage)];
 
-	const makeCompletion = await Services.chat.makeCompletion(newMessage);
+	const makeCompletion = await Services.chat.makeCompletion({
+		question: newMessage.content,
+	});
 
 	chatStore.isTyping = false;
 	chatStore.messages = [...chatStore.messages, makeCompletion];

@@ -8,13 +8,21 @@ import fetch from "$lib/utils/fetch";
 
 export class Chat {
 	static async makeCompletion(message: IMessagePayload): Promise<IMessage> {
+		const request = await fetch("/ask-dev", {
+			method: "POST",
+			body: JSON.stringify(message),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		const response = await request.text();
+
 		const aiResponse = messageSchema.parse({
-			content:
-				"Gracias por tu mensaje. Estoy procesando tu consulta y te responderé en breve.",
+			content: response,
 			role: ERole.Assistant,
 			timestamp: new Date().toLocaleDateString(),
 		});
-		await new Promise((resolve) => setTimeout(resolve, 2000));
 		return aiResponse;
 	}
 
@@ -28,14 +36,14 @@ export class Chat {
 	}
 
 	static async toggleMessageReaction(messageID: string, isLiked: boolean) {
-		const request = await fetch(`/message/${messageID}`, {
+		/* 	const request = await fetch(`/message/${messageID}`, {
 			method: "POST",
 			body: JSON.stringify({ isLiked }),
 			headers: {
 				"Content-Type": "application/json",
 			},
 		});
-		const response = await request.json();
+		const response = await request.json(); */
 		return isLiked;
 	}
 }
