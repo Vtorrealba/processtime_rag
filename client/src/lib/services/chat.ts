@@ -10,7 +10,7 @@ export class Chat {
 	static async makeCompletion(message: IMessagePayload): Promise<IMessage> {
 		const request = await fetch("/ask-dev", {
 			method: "POST",
-			body: JSON.stringify(message),
+			body: JSON.stringify({ question: message.question }),
 			headers: {
 				"Content-Type": "application/json",
 			},
