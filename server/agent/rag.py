@@ -1,30 +1,22 @@
 import os
 
-from langchain_chroma import Chroma
 from langchain_core.messages import HumanMessage, AIMessage
-from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnableParallel, RunnablePassthrough
-from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.runnables import RunnableParallel, RunnableLambda
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langfuse import Langfuse
-from langfuse.callback import CallbackHandler
+from agent.vectorstore.retriever import pinecone_retriever
 
-langfuse_secret = os.getenv("LANGFUSE_SECRET_KEY")
-langfuse_public = os.getenv("LANGFUSE_PUBLIC_KEY")
+from dotenv import load_dotenv
+load_dotenv()
+
+
 openai_api_key = os.getenv("OPENAI_API_KEY")
-
-langfuse_handler = CallbackHandler(
-    secret_key=langfuse_secret,
-    public_key=langfuse_public,
-    host="https://us.cloud.langfuse.com",
-)
-
 langfuse = Langfuse()
 
-langfuse_prompt = langfuse.get_prompt("legal-expert")
-question_generation_prompt = langfuse.get_prompt("question_generation")
+langfuse_prompt = langfuse.get_prompt("oriencoop-rag-qa")
+question_generation_prompt = langfuse.get_prompt("oriencoop-question-suggestions")
 langchain_prompt = ChatPromptTemplate.from_template(
     langfuse_prompt.get_langchain_prompt())
 
@@ -41,17 +33,9 @@ def format_docs(docs):
 
 llm = ChatOpenAI(model="gpt-4o")
 
-config = {
-    "callbacks": [langfuse_handler],
-    "run_name": "legal_expert_Q&A_citations",
-    "session_id": "legal_expert_Q&A"
-}
-
 
 def get_retriever():
-    embeddings = OpenAIEmbeddings()
-    vectordb = Chroma(persist_directory='db', embedding_function=embeddings)
-    retriever = vectordb.as_retriever()
+    retriever = RunnableLambda(pinecone_retriever)
     return retriever
 
 
@@ -90,4 +74,4 @@ rag_chain = RunnableParallel({
     "context": retrieve_documents,
     "question": get_question,
     "chat_history": get_chat_history,
-}) | langchain_prompt | llm | StrOutputParser()
+}) | langchain_prompt | llm

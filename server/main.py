@@ -1,4 +1,23 @@
 from fastapi import FastAPI, Request, Form, Depends
+from pydantic import BaseModel
+from langchain_core.messages import HumanMessage
+from agent.workflow import agent_graph, config
+
+
+
+
+class SimpleRequest(BaseModel):
+    """
+    Esquema para endpoint de prueba interna
+    
+    request ejemplo
+    json
+    {
+        question: "prueba"
+    }
+    """
+    question: str
+
 
 app = FastAPI(
     title="Oriencoop RAG Agent",
@@ -11,7 +30,17 @@ def read_root():
     return {"message": "Hello, World!"}
 
 
-@app.post("/message")
-async def reply(request: Request, Body: str = Form(), db: Session = Depends(get_db)):
-    form_data = await request.form()
+@app.post("/ask-dev")
+async def reply(request: SimpleRequest) -> dict[str, str]:
+    """
+    Endpoint para prueba interna
+    envia una SimpleRequest
+    
+    retorna -> {"content": "string" }
+    """
+    response = agent_graph.invoke({"messages": [HumanMessage(content=request.question)]}, config = config)
+    agent_response =  response["messages"][-1].content
+    return {"content": agent_response}
+    
+    
 
