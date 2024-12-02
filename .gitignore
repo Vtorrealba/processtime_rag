@@ -163,3 +163,5 @@ cython_debug/
 
 
 DesarrolloPT_accessKeys.csv
+
+server/agent/tests
