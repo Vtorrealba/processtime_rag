@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"start": "node --env-file=.env build",
 		"preview": "vite preview --host 0.0.0.0",
 		"check": "svelte-kit sync && svelte-check --ignore src/lib/components/ui/ --no-tsconfig --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --ignore src/lib/components/ui/ --no-tsconfig  --tsconfig ./tsconfig.json --watch",
@@ -39,6 +40,7 @@
 		"zod": "^3.23.8"
 	},
 	"dependencies": {
+		"@sveltejs/adapter-node": "^5.2.9",
 		"lucide-svelte": "^0.460.1"
 	}
 }
