@@ -28,9 +28,11 @@ app = FastAPI(
 
 origins = [
     "http://localhost:4173",
+    "http://localhost:5173/",
     "http://18.230.75.174:4173",
     "http://18.230.75.174",
     "http://18.230.75.174:80",
+    "https://oriencoop-rag.click"
 ]
 
 app.add_middleware(

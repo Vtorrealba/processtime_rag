@@ -17,7 +17,7 @@ let isAi = message.role === ERole.Assistant;
 
 let isLiked: boolean | undefined = $state(undefined);
 
-let uniqueId = Math.random().toString(36).substring(2, 15);
+let uniqueId = `m${Math.random().toString(36).substring(2, 15)}`;
 
 $effect(() => {
 	if (isLiked !== undefined) {
