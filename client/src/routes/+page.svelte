@@ -1,53 +1,50 @@
 <script lang="ts">
-  import AssistantAvatar from '$lib/components/chat/assistant-avatar.svelte';
-  import ChatInput from '$lib/components/chat/input.svelte';
-  import ChatMessage from '$lib/components/chat/message.svelte';
-  import Suggestion from '$lib/components/chat/suggestion.svelte';
-  import TypingIndicator from '$lib/components/chat/typing-indicator.svelte';
-  import { ERole, messageSchema } from '$lib/schemas/message';
-  import Services from '$lib/services';
-  import { chatStore } from '$lib/store/chat.svelte.js';
-  import { persisted } from '$lib/utils/persisted.svelte';
+import AssistantAvatar from "$lib/components/chat/assistant-avatar.svelte";
+import ChatInput from "$lib/components/chat/input.svelte";
+import ChatMessage from "$lib/components/chat/message.svelte";
+import Suggestion from "$lib/components/chat/suggestion.svelte";
+import TypingIndicator from "$lib/components/chat/typing-indicator.svelte";
+import { ERole, messageSchema } from "$lib/schemas/message";
+import Services from "$lib/services";
+import { chatStore } from "$lib/store/chat.svelte.js";
+import { persisted } from "$lib/utils/persisted.svelte";
 
-  const session = persisted('session', {
-    token: 'token',
-  });
+const session = persisted("session", {
+	token: "token",
+});
 
-  /** @type {HTMLElement} */
-  let chatContainer: HTMLElement;
+/** @type {HTMLElement} */
+let chatContainer: HTMLElement;
 
-  async function handleSendMessage(content: string) {
-    const newMessage = {
-      content,
-      role: ERole.User,
-      timestamp: new Date().toLocaleDateString(),
-    };
+async function handleSendMessage(content: string) {
+	const newMessage = {
+		content,
+		role: ERole.User,
+		timestamp: new Date().toLocaleDateString(),
+	};
 
-    chatStore.isTyping = true;
-    chatStore.messages = [
-      ...chatStore.messages,
-      messageSchema.parse(newMessage),
-    ];
+	chatStore.isTyping = true;
+	chatStore.messages = [...chatStore.messages, messageSchema.parse(newMessage)];
 
-    const makeCompletion = await Services.chat.makeCompletion({
-      question: newMessage.content,
-    });
+	const makeCompletion = await Services.chat.makeCompletion({
+		question: newMessage.content,
+	});
 
-    chatStore.isTyping = false;
-    chatStore.messages = [...chatStore.messages, makeCompletion];
-  }
+	chatStore.isTyping = false;
+	chatStore.messages = [...chatStore.messages, makeCompletion];
+}
 
-  function scrollToBottom() {
-    setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 0);
-  }
+function scrollToBottom() {
+	setTimeout(() => {
+		chatContainer.scrollTop = chatContainer.scrollHeight;
+	}, 0);
+}
 
-  $effect(() => {
-    if (chatContainer && chatStore.messages) {
-      scrollToBottom();
-    }
-  });
+$effect(() => {
+	if (chatContainer && chatStore.messages) {
+		scrollToBottom();
+	}
+});
 </script>
 
 <svelte:head>
