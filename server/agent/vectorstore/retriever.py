@@ -8,7 +8,9 @@ from openai import OpenAI
 
 from langchain_core.documents import Document
 from langchain_core.runnables import RunnableLambda
+from dotenv import load_dotenv
 
+load_dotenv()
 
 langfuse = Langfuse(
     public_key=os.getenv("LANGUSE_PUBLIC_KEY"),

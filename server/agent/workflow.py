@@ -12,6 +12,9 @@ from langgraph.checkpoint.memory import MemorySaver
 from agent.rag import rag_chain
 from langfuse.callback import CallbackHandler
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 langfuse_secret = os.getenv("LANGFUSE_SECRET_KEY")
 langfuse_public = os.getenv("LANGFUSE_PUBLIC_KEY")
