@@ -1,45 +1,45 @@
 <script lang="ts">
-  import gsap from 'gsap';
-  import { onMount } from 'svelte';
-  import P from '../typography/p.svelte';
-  import { Card } from '../ui/card';
-  import CardContent from '../ui/card/card-content.svelte';
-  import AssistantAvatar from './assistant-avatar.svelte';
-  import UserAvatar from './user-avatar.svelte';
+import gsap from "gsap";
+import { onMount } from "svelte";
+import P from "../typography/p.svelte";
+import { Card } from "../ui/card";
+import CardContent from "../ui/card/card-content.svelte";
+import AssistantAvatar from "./assistant-avatar.svelte";
+import UserAvatar from "./user-avatar.svelte";
 
-  import { ERole, type IMessage } from '$lib/schemas/message';
-  import Services from '$lib/services';
-  import { ThumbsDown, ThumbsUp } from 'lucide-svelte';
-  import Button from '../ui/button/button.svelte';
+import { ERole, type IMessage } from "$lib/schemas/message";
+import Services from "$lib/services";
+import { ThumbsDown, ThumbsUp } from "lucide-svelte";
+import Button from "../ui/button/button.svelte";
 
-  let { message }: { message: IMessage } = $props();
-  let isAi = message.role === ERole.Assistant;
+let { message }: { message: IMessage } = $props();
+let isAi = message.role === ERole.Assistant;
 
-  let isLiked: boolean | undefined = $state(undefined);
+let isLiked: boolean | undefined = $state(undefined);
 
-  let uniqueId = `m${Math.random().toString(36).substring(2, 15)}`;
+let uniqueId = `m${Math.random().toString(36).substring(2, 15)}`;
 
-  $effect(() => {
-    if (isLiked !== undefined) {
-      Services.chat.toggleMessageReaction(message.content, isLiked);
-    }
-  });
+$effect(() => {
+	if (isLiked !== undefined) {
+		Services.chat.toggleMessageReaction(message.content, isLiked);
+	}
+});
 
-  onMount(() => {
-    gsap.fromTo(
-      `#${uniqueId}`,
-      {
-        opacity: 0,
-        y: 5,
-        duration: 0.2,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.2,
-      },
-    );
-  });
+onMount(() => {
+	gsap.fromTo(
+		`#${uniqueId}`,
+		{
+			opacity: 0,
+			y: 5,
+			duration: 0.2,
+		},
+		{
+			opacity: 1,
+			y: 0,
+			duration: 0.2,
+		},
+	);
+});
 </script>
 
 <div id={uniqueId} class="mb-4">
