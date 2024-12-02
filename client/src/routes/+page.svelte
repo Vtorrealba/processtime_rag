@@ -7,6 +7,11 @@ import TypingIndicator from "$lib/components/chat/typing-indicator.svelte";
 import { ERole, messageSchema } from "$lib/schemas/message";
 import Services from "$lib/services";
 import { chatStore } from "$lib/store/chat.svelte.js";
+import { persisted } from "$lib/utils/persisted.svelte";
+
+const session = persisted("session", {
+	token: "token",
+});
 
 /** @type {HTMLElement} */
 let chatContainer: HTMLElement;

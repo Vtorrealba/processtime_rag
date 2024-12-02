@@ -8,7 +8,10 @@ export enum ERole {
 export const roleSchema = z.enum([ERole.User, ERole.Assistant]);
 
 export const messagePayloadSchema = z.object({
-	question: z.string(),
+	question: z
+		.string()
+		.trim()
+		.max(150, "Las preguntas deben tener menos de 150 caracteres"),
 });
 
 export const messageSchema = z.object({
