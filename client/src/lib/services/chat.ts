@@ -7,10 +7,13 @@ import {
 import fetch from "$lib/utils/fetch";
 
 export class Chat {
-	static async makeCompletion(message: IMessagePayload): Promise<IMessage> {
-		const request = await fetch("/ask-dev", {
+	static async makeCompletion(
+		message: IMessagePayload,
+		user_id: string,
+	): Promise<IMessage> {
+		const request = await fetch("/ask", {
 			method: "POST",
-			body: JSON.stringify({ question: message.question }),
+			body: JSON.stringify({ question: message.question, id: user_id }),
 			headers: {
 				"Content-Type": "application/json",
 			},
