@@ -1,4 +1,5 @@
 <script lang="ts">
+import { page } from "$app/stores";
 import AssistantAvatar from "$lib/components/chat/assistant-avatar.svelte";
 import ChatInput from "$lib/components/chat/input.svelte";
 import ChatMessage from "$lib/components/chat/message.svelte";
@@ -11,6 +12,8 @@ import { chatStore } from "$lib/store/chat.svelte.js";
 /** @type {HTMLElement} */
 let chatContainer: HTMLElement;
 
+const user_id = $page.url.searchParams.get("id");
+
 async function handleSendMessage(content: string) {
 	const newMessage = {
 		content,
@@ -21,9 +24,12 @@ async function handleSendMessage(content: string) {
 	chatStore.isTyping = true;
 	chatStore.messages = [...chatStore.messages, messageSchema.parse(newMessage)];
 
-	const makeCompletion = await Services.chat.makeCompletion({
-		question: newMessage.content,
-	});
+	const makeCompletion = await Services.chat.makeCompletion(
+		{
+			question: newMessage.content,
+		},
+		user_id ?? "",
+	);
 
 	chatStore.isTyping = false;
 	chatStore.messages = [...chatStore.messages, makeCompletion];
@@ -50,49 +56,65 @@ $effect(() => {
   />
 </svelte:head>
 
-<div class="flex flex-col h-dvh bg-white">
-  <!-- Header -->
-  <header
-    class="bg-white border-b pt-0 sm:py-4 flex justify-center px-4 sm:px-0"
-  >
-    <div class="flex items-center gap-3 max-w-3xl">
-      <AssistantAvatar />
-      <div>
-        <h1 class="md:text-xl font-semibold text-blue-900">
-          Asistente Virtual
-        </h1>
-        <p class="text-muted-foreground text-xs md:text-sm">
-          <span class="hidden md:inline">
-            Estoy acá para ayudarte y resolver de manera rápida tus dudas.
-          </span>
-          Puedes consultar información de la empresa como Políticas, Procedimientos,
-          Productos y sus características
-        </p>
+{#if user_id}
+  <div class="flex flex-col h-dvh bg-white">
+    <!-- Header -->
+    <header
+      class="bg-white border-b pt-0 sm:py-4 flex justify-center px-4 sm:px-0"
+    >
+      <div class="flex items-center gap-3 max-w-3xl">
+        <AssistantAvatar />
+        <div>
+          <h1 class="md:text-xl font-semibold text-blue-900">
+            Asistente Virtual
+          </h1>
+          <p class="text-muted-foreground text-xs md:text-sm">
+            <span class="hidden md:inline">
+              Estoy acá para ayudarte y resolver de manera rápida tus dudas.
+            </span>
+            Puedes consultar información de la empresa como Políticas, Procedimientos,
+            Productos y sus características
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Chat Messages -->
+    <main
+      bind:this={chatContainer}
+      class="flex-1 overflow-y-auto py-6 px-4 sm:px-0"
+    >
+      <div class="max-w-3xl mx-auto space-y-4">
+        {#each chatStore.messages as message}
+          <ChatMessage {message} />
+        {/each}
+        {#if chatStore.isTyping}
+          <TypingIndicator />
+        {/if}
+      </div>
+    </main>
+    <!-- suggestions -->
+    <Suggestion />
+
+    <!-- Input Area -->
+    <div>
+      <div class="max-w-3xl mx-auto">
+        <ChatInput sendMessage={handleSendMessage} />
       </div>
     </div>
-  </header>
-
-  <!-- Chat Messages -->
-  <main
-    bind:this={chatContainer}
-    class="flex-1 overflow-y-auto py-6 px-4 sm:px-0"
-  >
-    <div class="max-w-3xl mx-auto space-y-4">
-      {#each chatStore.messages as message}
-        <ChatMessage {message} />
-      {/each}
-      {#if chatStore.isTyping}
-        <TypingIndicator />
-      {/if}
-    </div>
-  </main>
-  <!-- suggestions -->
-  <Suggestion />
-
-  <!-- Input Area -->
-  <div>
-    <div class="max-w-3xl mx-auto">
-      <ChatInput sendMessage={handleSendMessage} />
+  </div>
+{:else}
+  <!-- no has access -->
+  <div class="flex items-center justify-center h-dvh bg-white">
+    <div class="text-center">
+      <h1 class="text-2xl font-bold text-blue-900">
+        No tienes acceso a esta página
+      </h1>
+      <p class="text-muted-foreground text-xs md:text-sm">
+        <span class="hidden md:inline">
+          Intenta acceder desde el sistema de administración de la empresa
+        </span>
+      </p>
     </div>
   </div>
-</div>
+{/if}

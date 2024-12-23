@@ -1,10 +1,13 @@
 <script lang="ts">
+import { page } from "$app/stores";
 import { ERole, messageSchema } from "$lib/schemas/message";
 import Services from "$lib/services";
 import { chatStore } from "$lib/store/chat.svelte";
 import Placeholder from "@whizzes/svelte-placeholder";
 import { onMount } from "svelte";
 import { Button } from "../ui/button";
+
+const user_id = $page.url.searchParams.get("id");
 
 async function handleSendMessage(content: string) {
 	const newMessage = {
@@ -16,9 +19,12 @@ async function handleSendMessage(content: string) {
 	chatStore.isTyping = true;
 	chatStore.messages = [...chatStore.messages, messageSchema.parse(newMessage)];
 
-	const makeCompletion = await Services.chat.makeCompletion({
-		question: newMessage.content,
-	});
+	const makeCompletion = await Services.chat.makeCompletion(
+		{
+			question: newMessage.content,
+		},
+		user_id ?? "",
+	);
 
 	chatStore.isTyping = false;
 	chatStore.messages = [...chatStore.messages, makeCompletion];
