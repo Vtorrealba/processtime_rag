@@ -9,11 +9,11 @@ import fetch from "$lib/utils/fetch";
 export class Chat {
 	static async makeCompletion(
 		message: IMessagePayload,
-		user_id: string,
+		user_id: string | number,
 	): Promise<IMessage> {
 		const request = await fetch("/ask", {
 			method: "POST",
-			body: JSON.stringify({ question: message.question, id: user_id }),
+			body: JSON.stringify({ question: message.question, id: Number(user_id) }),
 			headers: {
 				"Content-Type": "application/json",
 			},
